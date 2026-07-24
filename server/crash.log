@@ -1,0 +1,11 @@
+ValidationError: Project validation failed: uploadedFiles.5.content: Path `content` is required.
+    at Document.invalidate (C:\Users\ayush\OneDrive\Desktop\Ai code Review\server\node_modules\mongoose\lib\document.js:3455:32)
+    at Subdocument.invalidate (C:\Users\ayush\OneDrive\Desktop\Ai code Review\server\node_modules\mongoose\lib\types\subdocument.js:231:12)
+    at EmbeddedDocument.validate (C:\Users\ayush\OneDrive\Desktop\Ai code Review\server\node_modules\mongoose\lib\document.js:2866:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 5)
+    at async SchemaDocumentArray.doValidate (C:\Users\ayush\OneDrive\Desktop\Ai code Review\server\node_modules\mongoose\lib\schema\documentArray.js:268:3)
+    at async Promise.all (index 3)
+    at async model.validate (C:\Users\ayush\OneDrive\Desktop\Ai code Review\server\node_modules\mongoose\lib\document.js:2857:30)
+    at async model.$__save (C:\Users\ayush\OneDrive\Desktop\Ai code Review\server\node_modules\mongoose\lib\model.js:399:7)
+    at async maybeTracedSave (C:\Users\ayush\OneDrive\Desktop\Ai code Review\server\node_modules\mongoose\lib\model.js:675:7)\n

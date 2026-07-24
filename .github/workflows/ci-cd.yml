@@ -1,0 +1,158 @@
+name: Production CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Manual trigger
+
+env:
+  REGISTRY: ghcr.io
+  FRONTEND_IMAGE_NAME: ${{ github.repository }}-frontend
+  BACKEND_IMAGE_NAME: ${{ github.repository }}-backend
+
+jobs:
+  build-and-test:
+    name: Build & Test (CI)
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Stage 1: Checkout Repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Stage 2: Setup latest LTS Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: |
+            client/package-lock.json
+            server/package-lock.json
+
+      # Stage 3: Install Frontend Dependencies
+      - name: Install Frontend Dependencies
+        working-directory: ./client
+        run: npm ci || npm install
+
+      # Stage 4: Install Backend Dependencies
+      - name: Install Backend Dependencies
+        working-directory: ./server
+        run: npm ci || npm install
+
+      # Stage 5: Run ESLint (using oxlint configured in project)
+      - name: Run Linter (Frontend)
+        working-directory: ./client
+        run: npm run lint --if-present
+
+      # Stage 6: Run Unit Tests
+      - name: Run Unit Tests (Frontend)
+        working-directory: ./client
+        run: npm test --if-present
+
+      - name: Run Unit Tests (Backend)
+        working-directory: ./server
+        run: npm test --if-present
+
+      # Stage 7 & 8: Build Verification (Frontend & Backend)
+      - name: Build Frontend
+        working-directory: ./client
+        run: npm run build
+        
+      # Stage 9: Verify Build (Ensure dist folder exists)
+      - name: Verify Frontend Build
+        working-directory: ./client
+        run: test -d dist || exit 1
+
+  docker-build-push:
+    name: Docker Build & Push to GHCR
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Frontend
+        id: meta-frontend
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}
+          tags: |
+            type=sha
+            latest
+
+      - name: Extract metadata (tags, labels) for Backend
+        id: meta-backend
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
+          tags: |
+            type=sha
+            latest
+
+      # Stage 10 & 12: Build & Tag Frontend Docker Image
+      - name: Build and push Frontend Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          push: true
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          labels: ${{ steps.meta-frontend.outputs.labels }}
+
+      # Stage 11 & 12: Build & Tag Backend Docker Image
+      - name: Build and push Backend Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          push: true
+          tags: ${{ steps.meta-backend.outputs.tags }}
+          labels: ${{ steps.meta-backend.outputs.labels }}
+
+  deploy:
+    name: Deploy to Production (CD)
+    needs: docker-build-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      # Stage 14: Deploy Automatically (Frontend via Vercel CLI)
+      - name: Checkout Code for Deployment
+        uses: actions/checkout@v4
+        
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+        
+      - name: Deploy Frontend to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel pull --yes --environment=production --token=$VERCEL_TOKEN && vercel build --prod --token=$VERCEL_TOKEN && vercel --prod --token=$VERCEL_TOKEN
+        
+      # Stage 14: Deploy Automatically (Backend via Render Deploy Hook)
+      - name: Deploy Backend to Render
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -n "$RENDER_DEPLOY_HOOK" ]; then
+            echo "Triggering Render deployment..."
+            curl -X POST $RENDER_DEPLOY_HOOK
+          else
+            echo "RENDER_DEPLOY_HOOK not set. Skipping Backend deployment."
+          fi
+
+      # Stage 15: Verify Deployment
+      - name: Verify Deployment Success
+        run: echo "Deployment pipelines triggered successfully. Monitor Vercel and Render dashboards for live URL availability."

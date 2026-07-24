@@ -1,0 +1,25 @@
+Error: 413 {"error":{"message":"Request too large for model `llama-3.3-70b-versatile` in organization `org_01kxj0nw41egnt9qm1hrba0r8y` service tier `on_demand` on tokens per minute (TPM): Limit 12000, Requested 13833, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+    at APIError.generate (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/node_modules/groq-sdk/core/error.mjs:59:16)
+    at Groq.makeStatusError (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/node_modules/groq-sdk/client.mjs:135:32)
+    at Groq.makeRequest (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/node_modules/groq-sdk/client.mjs:277:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async analyzeProjectStructure (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/services/groqService.js:208:28)
+    at async generateProjectReview (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/controllers/projectController.js:197:24)\nError: 401 {"error":{"message":"Invalid API Key","type":"invalid_request_error","code":"invalid_api_key"}}
+    at APIError.generate (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/node_modules/groq-sdk/core/error.mjs:39:20)
+    at Groq.makeStatusError (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/node_modules/groq-sdk/client.mjs:135:32)
+    at Groq.makeRequest (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/node_modules/groq-sdk/client.mjs:277:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async analyzeProjectStructure (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/services/groqService.js:208:28)
+    at async reviewGithubRepo (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/controllers/repositoryController.js:131:20)\nError: 401 {"error":{"message":"Invalid API Key","type":"invalid_request_error","code":"invalid_api_key"}}
+    at APIError.generate (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/node_modules/groq-sdk/core/error.mjs:39:20)
+    at Groq.makeStatusError (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/node_modules/groq-sdk/client.mjs:135:32)
+    at Groq.makeRequest (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/node_modules/groq-sdk/client.mjs:277:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async analyzeProjectStructure (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/services/groqService.js:208:28)
+    at async reviewGithubRepo (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/controllers/repositoryController.js:131:20)\nError: 401 {"error":{"message":"Invalid API Key","type":"invalid_request_error","code":"invalid_api_key"}}
+    at APIError.generate (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/node_modules/groq-sdk/core/error.mjs:39:20)
+    at Groq.makeStatusError (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/node_modules/groq-sdk/client.mjs:135:32)
+    at Groq.makeRequest (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/node_modules/groq-sdk/client.mjs:277:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async analyzeProjectStructure (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/services/groqService.js:208:28)
+    at async reviewGithubRepo (file:///C:/Users/ayush/OneDrive/Desktop/Ai%20code%20Review/server/controllers/repositoryController.js:131:20)\n
