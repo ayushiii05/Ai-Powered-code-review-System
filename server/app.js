@@ -16,7 +16,17 @@ const app = express();
 
 // Middleware
 // Enable CORS for frontend requests
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow local development, Vercel deployments, and explicitly set CLIENT_URL
+    if (!origin || origin.startsWith('http://localhost') || origin.endsWith('.vercel.app') || origin === process.env.CLIENT_URL) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 
 // Set security HTTP headers
 app.use(helmet());
