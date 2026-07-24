@@ -8,9 +8,9 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  FRONTEND_IMAGE_NAME: ${{ github.repository }}-frontend
-  BACKEND_IMAGE_NAME: ${{ github.repository }}-backend
-
+  FRONTEND_IMAGE_NAME: ayushiii05/ai-powered-code-review-system-frontend
+  BACKEND_IMAGE_NAME: ayushiii05/ai-powered-code-review-system-backend
+               
 jobs:
   build-and-test:
     name: Build & Test (CI)
@@ -29,7 +29,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: |
             client/package-lock.json
-            server/package-lock.json
+            server/package-lock.json 
 
       # Stage 3: Install Frontend Dependencies
       - name: Install Frontend Dependencies
